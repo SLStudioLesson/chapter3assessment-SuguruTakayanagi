@@ -1,7 +1,9 @@
 package com.recipeapp.datahandler;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -42,14 +44,12 @@ public class CSVDataHandler implements DataHandler {
             // Ingredient型リストをRecipeインスタンスの引数に渡す。
             // あとはRecipe型リストにRecipeオブジェクトを格納してreturnする。
             while ((line = reader.readLine()) != null) {
-                String[] s1 = line.split(",");
-                for (int i = 1; i < s1.length; i++) {
-                    Ingredient ingredient = new Ingredient(s1[i]);
-                    ArrayList<Ingredient> ingredients = new ArrayList<>();
-                    ingredients.add(ingredient);
-                    Recipe recipe = new Recipe(s1[0], ingredients);
-                    lists.add(recipe);
-                }
+                String[] s1 = line.split(",", 2);
+                Ingredient ingredient = new Ingredient(s1[1]);
+                ArrayList<Ingredient> ingredients = new ArrayList<>();
+                ingredients.add(ingredient);
+                Recipe recipe = new Recipe(s1[0], ingredients);
+                lists.add(recipe);
             }
         } catch (IOException e) {
             throw new IOException();
@@ -58,7 +58,21 @@ public class CSVDataHandler implements DataHandler {
     }
 
     public void writeData(Recipe recipe) throws IOException {
-
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.filePath, true))) {
+            writer.newLine();
+            String str = "";
+            for (int i = 0; i < recipe.getIngredients().size() - 1; i++) {
+                if (i < recipe.getIngredients().size() - 2) {
+                    str += recipe.getIngredients().get(i) + ",";
+                } else {
+                    str += recipe.getIngredients().get(i);
+                }
+            }
+            String writeString = recipe.getName() + "," + str;
+            writer.write(writeString);
+        } catch (IOException e) {
+            throw new IOException();
+        }
     }
 
     public ArrayList<Recipe> searchData(String keyword) throws IOException {

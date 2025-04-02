@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import com.recipeapp.datahandler.DataHandler;
+import com.recipeapp.model.Ingredient;
 import com.recipeapp.model.Recipe;
 
 public class RecipeUI {
@@ -38,7 +39,7 @@ public class RecipeUI {
                         this.displayRecipes();
                         break;
                     case "2":
-
+                        this.addNewRecipe();
                         break;
                     case "3":
 
@@ -65,8 +66,9 @@ public class RecipeUI {
                 System.out.println("-----------------------------------");
                 for (Recipe rcp : dataList) {
                     System.out.println("Recipe Name: " + rcp.getName());
-                    // String ingLists = String.join(",", rcp.getIngredients());
-                    System.out.println("Main Ingredients: " + rcp.getIngredients());
+                    for (int i = 0; i < rcp.getIngredients().size(); i++) {
+                        System.out.println("Main Ingredients: " + rcp.getIngredients().get(i));
+                    }
                     System.out.println("-----------------------------------");
                 }
             } else {
@@ -74,6 +76,28 @@ public class RecipeUI {
             }
         } catch (IOException e) {
             System.out.println("Error reading file: " + e.getMessage());
+        }
+    }
+
+    public void addNewRecipe() {
+        try {
+            System.out.println("Adding a new recipe.");
+            System.out.print("Enter recipe name: ");
+            String newName = reader.readLine();
+            System.out.println("Enter ingredients (type 'done' when finished):");
+            ArrayList<Ingredient> ingLists = new ArrayList<>();
+            String newIng = "";
+            while (!(newIng.equals("done"))) {
+                System.out.print("Ingredient: ");
+                newIng = reader.readLine();
+                Ingredient i1 = new Ingredient(newIng);
+                ingLists.add(i1);
+            }
+            Recipe newRecipe = new Recipe(newName, ingLists);
+            this.dataHandler.writeData(newRecipe);
+            System.out.println("Recipe added successfully.");
+        } catch (IOException e) {
+            System.out.println("Failed to add new recipe: " + e.getMessage());
         }
     }
 }
