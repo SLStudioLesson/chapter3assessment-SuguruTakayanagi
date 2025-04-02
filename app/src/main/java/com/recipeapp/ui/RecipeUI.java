@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.List;
+
+import com.recipeapp.datahandler.DataHandler;
+import com.recipeapp.model.Recipe;
 
 public class RecipeUI {
     private BufferedReader reader;
@@ -33,10 +35,13 @@ public class RecipeUI {
 
                 switch (choice) {
                     case "1":
+                        this.displayRecipes();
                         break;
                     case "2":
+
                         break;
                     case "3":
+
                         break;
                     case "4":
                         System.out.println("Exiting the application.");
@@ -48,6 +53,27 @@ public class RecipeUI {
             } catch (IOException e) {
                 System.out.println("Error reading input from user: " + e.getMessage());
             }
+        }
+    }
+
+    public void displayRecipes() {
+        ArrayList<Recipe> dataList = new ArrayList<>();
+        try {
+            dataList = this.dataHandler.readData();
+            if(!(dataList.isEmpty())) {
+                System.out.println("Recipes:");
+                System.out.println("-----------------------------------");
+                for (Recipe rcp : dataList) {
+                    System.out.println("Recipe Name: " + rcp.getName());
+                    // String ingLists = String.join(",", rcp.getIngredients());
+                    System.out.println("Main Ingredients: " + rcp.getIngredients());
+                    System.out.println("-----------------------------------");
+                }
+            } else {
+                System.out.println("No recipes available.");
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + e.getMessage());
         }
     }
 }
